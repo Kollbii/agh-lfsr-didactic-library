@@ -369,8 +369,11 @@ class LFSR():
 		'''
 		Display the information about LFSR with current state of variables
 		'''
-		print('%d bit LFSR with feedback polynomial %s' % (self.M, self.feedpoly))
-		print('Expected Period (if polynomial is primitive) = ', self.expectedPeriod)
+		if self.nonlinear == True:
+			print('%d bit NLFSR with Non-linear function' % (self.M))
+		else:
+			print('%d bit LFSR with feedback polynomial %s' % (self.M, self.feedpoly))	
+			print('Expected Period (if polynomial is primitive) = ', self.expectedPeriod)
 		print('Current :')
 		print(' State        : ', self.state)
 		print(' Count        : ', self.count)
