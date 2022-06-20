@@ -455,6 +455,7 @@ class LFSR():
 				self.seq  = np.append(self.seq, self.state[-1])
 
 		if self.nonlinear:
+			#Version 1 - Simple AND operation on given bits from NLFSR of given length
 			SBOX1 =[
 					[0,1],
 					[0,1,2],
@@ -464,23 +465,40 @@ class LFSR():
 					[1,2,4,5],
 					[2,4,5,7]]
 
-			SBOX2 =[
-    				[7, 0, 9, 5, 12, 6, 10, 3, 8, 11, 15, 2, 1, 13, 4, 14],
-    				[8, 3, 5, 9, 11, 12, 6, 10, 1, 13, 2, 14, 4, 7, 15, 0],
-    				[13, 6, 0, 10, 14, 3, 11, 5, 7, 1, 9, 4, 2, 8, 12, 15],
-    				[11, 2, 6, 13, 8, 14, 1, 4, 0, 5, 10, 3, 7, 9, 12, 15]]
-			#TODO Make some nonlinear magic and produce feedbackbit out of given current state.
-
-			state_to_dec = int("".join(str(x) for x in self.state), 2)
+			#Take bits from SBOX1 based on length of our NLFSR
 			bits = SBOX1[len(self.state) - 2]
 
-			for i in range(len(bits)):
-				index_col = int("".join(str(self.state[x]) for x in bits),2)%16
-				index_row = (bits[0] + bits[1] + bits[2] + bits[3])%4
+			#Make AND / XOR / OR operations
+			sbox_value= (bits[0] & bits[1]) ^ (bits[2] & bits[3])
+			b = sbox_value%2
 
-			sbox_value = SBOX2[index_row][index_col]
+			# Version 2 
+			# SBOX1 =[
+			# 		[0,1],
+			# 		[0,1,2],
+			# 		[0,1,2,3],
+			# 		[0,1,3,4],
+			# 		[1,3,4,5],
+			# 		[1,2,4,5],
+			# 		[2,4,5,7]]
 
-			b= sbox_value%2
+			# SBOX2 =[
+    		# 		[7, 0, 9, 5, 12, 6, 10, 3, 8, 11, 15, 2, 1, 13, 4, 14],
+    		# 		[8, 3, 5, 9, 11, 12, 6, 10, 1, 13, 2, 14, 4, 7, 15, 0],
+    		# 		[13, 6, 0, 10, 14, 3, 11, 5, 7, 1, 9, 4, 2, 8, 12, 15],
+    		# 		[11, 2, 6, 13, 8, 14, 1, 4, 0, 5, 10, 3, 7, 9, 12, 15]]
+			#
+
+			# state_to_dec = int("".join(str(x) for x in self.state), 2)
+			# bits = SBOX1[len(self.state) - 2]
+
+			# for i in range(len(bits)):
+			# 	index_col = int("".join(str(self.state[x]) for x in bits),2)%16
+			# 	index_row = (bits[0] + bits[1] + bits[2] + bits[3])%4
+
+			# sbox_value = SBOX2[index_row][index_col]
+
+			# b = sbox_value%2
 			
 		else:
 			b = np.logical_xor(self.state[self.fpoly[0] - 1], self.state[self.fpoly[1] - 1])
